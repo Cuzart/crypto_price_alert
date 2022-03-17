@@ -3,6 +3,7 @@ from email.message import EmailMessage
 from pycoingecko import CoinGeckoAPI
 import smtplib
 import os
+import json
 
 
 def send_email(subject, content):
@@ -46,27 +47,40 @@ def check_price_above(price, goal, asset_shortform):
 
 
 # check if trending asset is in asset list
-def check_is_trending(asset_list):
+def get_trending_assets(asset_list):
     cg = CoinGeckoAPI()
     top_7_trending = cg.get_search_trending()["coins"]
     trending = []
+    my_trending_assets="⚡ Trending on Coingecko ⚡ \n\n"
     for coin in top_7_trending:
         trending.append(coin['item']['symbol'])
         if coin['item']['symbol'] in asset_list:
-            price = cg.get_price(ids=coin['item']['id'], vs_currencies='eur')[coin['item']['id']]['eur']
-            print("-" * 50 + "TRENDING" + "-" * 50)
-            print("{} is trending now at {}€️".format(coin['item']['symbol'], round(price, 4)))
-            print("-" * 108)
+            my_trending_assets+= coin['item']['symbol'] + ', '
+    return my_trending_assets[:-2]
 
-
-# returns the correct coingecko id of an asset by it's shortform e.g. BTC
-def get_coingecko_id(asset_shortform):
+def check_price_action(asset_list, notifications):
     cg = CoinGeckoAPI()
+    # call here to save on API request limit
     all_coins = cg.get_coins_list()
+    for index, asset in enumerate(json.loads(asset_list)):
+        asset_id = get_coingecko_id(asset, all_coins)
+        asset_data = cg.get_price(ids=asset_id, vs_currencies='eur', include_24hr_change="true")
+
+        asset_price = round(asset_data[asset_id]['eur'], 4)
+        asset_24h_change = round(asset_data[asset_id]['eur_24h_change'], 2)
+        
+        # check for abnormal price activity on 24h change
+        if abs(asset_24h_change) >= 10:
+          notifications[index] = "🚨 Current price of {} is at {}€ with a {}% change in 24h.".format(asset_id.upper(), asset_price, asset_24h_change)
+          
+    print(notifications)  
+
+
+# returns the correct coingecko id of an asset by it's shortform e.g. bitcoin for BTC
+def get_coingecko_id(asset_shortform, all_coins):
     for coin in all_coins:
         if coin['symbol'] == asset_shortform.lower():
             return coin['id']
-
     print("Sorry we found no match for your asset.")
 
 

@@ -70,8 +70,8 @@ def check_price_action(asset_list, notifications):
         asset_24h_change = round(asset_data[asset_id]['eur_24h_change'], 2)
         
         # check for abnormal price activity on 24h change
-        if (asset_24h_change) < 10 or asset_24h_change > 20:
-          notifications[index] = "🚨 Current price of {} is at {}€ with a {}% change in 24h.".format(asset_id.upper(), asset_price, asset_24h_change)
+        if asset_24h_change < -10 or asset_24h_change > 20:
+          notifications[index] = "Current price of {} is at {}€ with a {}% change in 24h.".format(asset_id.upper(), asset_price, asset_24h_change)
           
     print(notifications)  
 

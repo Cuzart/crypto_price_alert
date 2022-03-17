@@ -28,7 +28,7 @@ while True:
 
         # only if there is a new notification added
         if len(notifications) > count_notifications:
-          message = ""
+          message = "🚨 Price Alerts 🚨 \n\n"
           for note in notifications:
             message += notifications[note] + '\n\n'
 

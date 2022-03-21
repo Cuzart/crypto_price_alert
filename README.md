@@ -2,8 +2,8 @@
   Crypto Price Alert 🔔
 </h1>
 <p>
-The script uses the Coingecko API to get real-time prices and send you an email,
-if you the price of an asset gets above/below your goal.
+The script uses the Coingecko API to get real-time prices of your configured asset list and send you an email,
+if the 24h change of your asset in percentage gets above/below your configured limit.
 </p>
 
 ## Getting started
@@ -27,8 +27,9 @@ if you the price of an asset gets above/below your goal.
     The script will check if any of the assets is currently trending at the coingecko search chart.
 
     ```shell
-    TIME_INTERVAL=600
+    TIME_INTERVAL=300
     WATCHED_ASSETS=['BTC', 'ETH', '...']
+    UPPER_LIMIT=10
     ```
 
 3.  **Start the script.**

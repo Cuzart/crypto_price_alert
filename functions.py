@@ -28,24 +28,6 @@ def send_email(subject, content):
     print("Server sent mail")
 
 
-# send mail if price is below your goal
-def check_price_below(price, goal, asset_shortform):
-    if price <= goal:
-        difference = round(goal - price, 4)
-        send_email("New lower price goal for {}! 📈 🥳".format(asset_shortform),
-                   "{} is currently {}€ under your goal of {}€.\n\n The current price is at {}€."
-                   .format(asset_shortform, difference, goal, round(price, 4)))
-
-
-# send mail if price is above your goal
-def check_price_above(price, goal, asset_shortform):
-    if price >= goal:
-        difference = round(price - goal, 4)
-        send_email("New upper price goal for {}! 📉 🥳".format(asset_shortform),
-                   "{} is currently {}€ above your goal of {}€.\n\n The current price is at {}€."
-                   .format(asset_shortform.upper(), difference, goal, round(price, 4)))
-
-
 # check if trending asset is in asset list
 def get_trending_assets(asset_list):
     cg = CoinGeckoAPI()
@@ -58,6 +40,7 @@ def get_trending_assets(asset_list):
             my_trending_assets+= coin['item']['symbol'] + ', '
     return my_trending_assets[:-2]
 
+# check if price of assets in list are up/down by the limit in their 24h change
 def check_price_action(asset_list, notifications):
     cg = CoinGeckoAPI()
     # call here to save on API request limit
@@ -70,7 +53,7 @@ def check_price_action(asset_list, notifications):
         asset_24h_change = round(asset_data[asset_id]['eur_24h_change'], 2)
         
         # check for abnormal price activity on 24h change
-        if asset_24h_change < -10 or asset_24h_change > 20:
+        if asset_24h_change <  getenv("LOWER_LIMIT") or asset_24h_change >  getenv("UPPER_LIMIT"):
           notifications[index] = "Current price of {} is at {}€ with a {}% change in 24h.".format(asset_id.upper(), asset_price, asset_24h_change)
           
     print(notifications)  
@@ -82,10 +65,3 @@ def get_coingecko_id(asset_shortform, all_coins):
         if coin['symbol'] == asset_shortform.lower():
             return coin['id']
     print("Sorry we found no match for your asset.")
-
-
-# triggers a desktop notification
-def notify(title, text):
-    os.system("""
-              osascript -e 'display notification "{}" with title "{}"'
-              """.format(text, title))

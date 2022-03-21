@@ -1,5 +1,5 @@
 from decouple import config as getenv
-from functions import check_price_below, check_price_above, get_trending_assets, get_coingecko_id, check_price_action, send_email
+from functions import  get_trending_assets, check_price_action, send_email
 from pycoingecko import CoinGeckoAPI
 
 import time

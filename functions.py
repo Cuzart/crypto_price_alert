@@ -21,7 +21,7 @@ def send_email(subject, content):
     msg = EmailMessage()
     msg.set_content(content)
     msg['Subject'] = subject
-    msg['From'] = sender_email
+    msg['From'] = 'Price Alert Bot' + f' <{sender_email}>'
     msg['To'] = receiver_email
 
     server.send_message(msg)
@@ -38,7 +38,12 @@ def get_trending_assets(asset_list):
         trending.append(coin['item']['symbol'])
         if coin['item']['symbol'] in asset_list:
             my_trending_assets+= coin['item']['symbol'] + ', '
-    return my_trending_assets[:-2]
+
+    # only if trending assets are in asset_list
+    if any(x in asset_list for x in trending): 
+      return my_trending_assets[:-2] 
+    else:
+      return ""
 
 # check if price of assets in list are up/down by the limit in their 24h change
 def check_price_action(asset_list, notifications):
@@ -54,7 +59,7 @@ def check_price_action(asset_list, notifications):
         
         # check for abnormal price activity on 24h change
         if asset_24h_change <  int(getenv("LOWER_LIMIT")) or asset_24h_change >  int(getenv("UPPER_LIMIT")):
-          notifications[index] = "Current price of {} is at {}€ with a {}% change in 24h.".format(asset_id.upper(), asset_price, asset_24h_change)
+          notifications[index] = (asset, asset_price, asset_24h_change)
           
     print(notifications)  
 

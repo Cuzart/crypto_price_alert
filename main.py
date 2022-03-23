@@ -6,7 +6,6 @@ import time
 import requests
 
 
-cg = CoinGeckoAPI()
 
 watched_assets = getenv('WATCHED_ASSETS')
 notifications = {}
@@ -26,12 +25,13 @@ while True:
 
         if counter % iterations_until_refresh == 0: notifications = {}
 
+
         # only if there is a new notification added
         if len(notifications) > count_notifications:
           message = "🚨 Price Alerts 🚨 \n\n"
           for note in notifications:
-            message += notifications[note] + '\n\n'
-
+            message += "Current price of {0[0]} is at {0[1]}€ with a {0[2]}% change in 24h.".format(notifications[note]) + '\n\n'
+ 
           # add my assets that are trending right now
           message += get_trending_assets(watched_assets)
           send_email("New abnormal price actions! 📈 🥳 ", message)

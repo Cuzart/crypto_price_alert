@@ -57,10 +57,14 @@ def check_price_action(asset_list, notifications):
         asset_price = round(asset_data[asset_id]['eur'], 4)
         asset_24h_change = round(asset_data[asset_id]['eur_24h_change'], 2)
         
+
         # check for abnormal price activity on 24h change
         if asset_24h_change <  int(getenv("LOWER_LIMIT")) or asset_24h_change >  int(getenv("UPPER_LIMIT")):
           notifications[index] = (asset, asset_price, asset_24h_change)
-          
+        else:
+          # delete entry if it falls below/above the limit
+          if index in notifications: del notifications[index]
+
     print(notifications)  
 
 

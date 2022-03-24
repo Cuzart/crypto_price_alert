@@ -13,7 +13,7 @@ iterations_until_refresh = seconds_in_day / int(getenv('TIME_INTERVAL'))
 
 while True:
     try:
-        old_notifications = notifications
+        old_notifications = dict(notifications)
         check_price_action(watched_assets, notifications)
 
         # reset after 24h = after iteration_until_refresh

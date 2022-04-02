@@ -1,5 +1,5 @@
 from decouple import config as getenv
-from functions import  get_trending_assets, check_price_action, send_telegram
+from functions import  get_trending_assets, check_price_action, send_telegram, send_email
 from pycoingecko import CoinGeckoAPI
 import time
 import requests
@@ -30,6 +30,8 @@ while True:
 
           # add my assets that are trending right now
           message += get_trending_assets(watched_assets)
+          # uncomment for sending email notifications
+          # send_email("New abnormal price actions! 📈 🥳", message)
           send_telegram(message)
 
     except requests.exceptions.Timeout:

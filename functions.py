@@ -1,9 +1,18 @@
 from decouple import config as getenv
 from email.message import EmailMessage
+from telegram_notifier import TelegramNotifier
 from pycoingecko import CoinGeckoAPI
 import smtplib
 import os
 import json
+
+
+def send_telegram(message):
+  token = getenv("TELEGRAM_API_TOKEN")
+  notifier = TelegramNotifier(token)
+  notifier.send(message)
+  print("Telegram message sent")
+
 
 
 def send_email(subject, content):
@@ -45,6 +54,7 @@ def get_trending_assets(asset_list):
     else:
       return ""
 
+
 # check if price of assets in list are up/down by the limit in their 24h change
 def check_price_action(asset_list, notifications):
     cg = CoinGeckoAPI()
@@ -73,4 +83,4 @@ def get_coingecko_id(asset_shortform, all_coins):
     for coin in all_coins:
         if coin['symbol'] == asset_shortform.lower():
             return coin['id']
-    print("Sorry we found no match for your asset.")
+    print("Sorry did not found a match for your asset {}.".format(asset_shortform))

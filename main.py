@@ -24,12 +24,13 @@ while True:
         # only if there is a new notification added
         if any(x not in old_notifications for x in notifications):
           message = "New abnormal price actions! 📈 🥳\n\n"
-          message = "🚨 Price Alerts 🚨 \n\n"
+          message += "🚨 Price Alerts 🚨 \n\n"
           for note in notifications:
             message += "Current price of {0[0]} is at {0[1]}€ with a {0[2]}% change in 24h.".format(notifications[note]) + '\n\n'
 
-          # add my assets that are trending right now
+          # add assets that are trending right now
           message += get_trending_assets(watched_assets)
+
           # uncomment for sending email notifications
           # send_email("New abnormal price actions! 📈 🥳", message)
           send_telegram(message)

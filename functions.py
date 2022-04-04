@@ -3,7 +3,6 @@ from email.message import EmailMessage
 from telegram_notifier import TelegramNotifier
 from pycoingecko import CoinGeckoAPI
 import smtplib
-import os
 import json
 
 
@@ -12,7 +11,6 @@ def send_telegram(message):
   notifier = TelegramNotifier(token)
   notifier.send(message)
   print("Telegram message sent")
-
 
 
 def send_email(subject, content):
@@ -49,10 +47,9 @@ def get_trending_assets(asset_list):
             my_trending_assets+= coin['item']['symbol'] + ', '
 
     # only if trending assets are in asset_list
-    if any(x in asset_list for x in trending): 
-      return my_trending_assets[:-2] 
-    else:
-      return ""
+    if any(x in asset_list for x in trending): return my_trending_assets.rsplit(", ")
+    
+    return ""
 
 
 # check if price of assets in list are up/down by the limit in their 24h change
@@ -83,4 +80,5 @@ def get_coingecko_id(asset_shortform, all_coins):
     for coin in all_coins:
         if coin['symbol'] == asset_shortform.lower():
             return coin['id']
+            
     print("Sorry did not found a match for your asset {}.".format(asset_shortform))

@@ -25,11 +25,14 @@ def start_alert():
 
             # only if there is a new notification added
             if any(x not in old_notifications for x in gecko.notifications):
-                message = "New abnormal price actions! 📈 🥳\n\n"
-                message += "🚨 Price Alerts 🚨 \n\n"
-                for note in gecko.notifications:
-                    message += "{0[0]} is at {0[1]}€ with a {0[2]}% change in 24h."\
-                                 .format(gecko.notifications[note]) + '\n\n'
+                notifications_sorted = sorted(gecko.notifications.values(), key=lambda tupl: tupl[2], reverse=True)
+                message = "New abnormal price actions! 🥳\n\n"
+                message += "Price Alerts 🚨 \n\n"
+
+                for entry in notifications_sorted:
+                    color =  "🟢" if entry[2] > 0 else "🔴"
+                    message += color +  " {0[0]} is at {0[1]}€ with a {0[2]}% change in 24h."\
+                                 .format(entry) + '\n\n'
 
                 # add assets that are trending right now
                 message += gecko.get_trending_assets()

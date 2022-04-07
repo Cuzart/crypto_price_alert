@@ -1,4 +1,4 @@
 python-decouple>=3.3
 pycoingecko>=1.4.1
 requests>=2.25.1
-python-telegram-bot>13.11
+python-telegram-bot>=13.11

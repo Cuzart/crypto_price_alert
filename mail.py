@@ -21,5 +21,4 @@ def send_email(subject, content):
     msg['To'] = receiver_email
 
     server.send_message(msg)
-    print("Server sent mail")
 

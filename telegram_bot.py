@@ -1,5 +1,6 @@
 import requests
 import json
+import logging
 from decouple import config as getenv
 from gecko import Gecko
 from telegram import Update
@@ -30,7 +31,7 @@ class TelegramBot:
 
         # return top seven trending coins
         if user_message in ("limits"):
-            return "Lower limit: {}%\nUpper limit: {}%".format(getenv("LOWER_LIMIT"), getenv("UPPER_LIMIT"))
+            return f"Lower limit: {getenv('LOWER_LIMIT')}%\nUpper limit: {getenv('UPPER_LIMIT')}%"
 
         # return top seven trending coins
         if user_message in ("trending"):
@@ -38,15 +39,15 @@ class TelegramBot:
 
         # return top seven trending coins
         if user_message in ("interval", "time"):
-            return "Prices are checked every {} minutes ⏰".format(int(getenv("TIME_INTERVAL")) // 60)
+            interval = int(getenv("TIME_INTERVAL")) // 60
+            return f"Prices are checked every {interval} minutes ⏰"
 
         if user_message in ("notifications", "state"):
             gecko.check_price_action()
             message = ""
             for line in gecko.notifications.values():
                 message += "{0[0]}, {0[1]}€, {0[2]}% in 24h \n".format(line)
-            
-            if len(message) > 1: return message
+            return message if len(message) > 1 else "No active " 
 
         if user_message in ("global"):
             return gecko.get_global()
@@ -57,7 +58,7 @@ class TelegramBot:
                 if coin['symbol'] == user_message.lower():
                     return "{0[0]} is at {0[1]}€ with a {0[2]}% change in 24h"\
                         .format(gecko.get_asset_data(user_message))
-        return "unknown message"
+        return "Unknown command"
 
     def start_command(self,  update: Update, context: CallbackContext):
         update.message.reply_text("Welcome!👋 \nTry '/help' to list all possbile commands or just wait to receive your alerts.")
@@ -82,9 +83,10 @@ class TelegramBot:
             response = self.get_response(text)
             update.message.reply_text(response)
 
+
 # sending a message directly to the api
 def send_message(message):
-    url = "https://api.telegram.org/bot{}/sendMessage".format(getenv("TELEGRAM_API_TOKEN"))
+    url = f"https://api.telegram.org/bot{getenv('TELEGRAM_API_TOKEN')}/sendMessage"
     params = {"chat_id": getenv("TELEGRAM_CHAT_ID"), "text":message}
     message = requests.post(url=url, params=params)
-    print("Telegram message sent", message)
+    logging.info("Telegram message sent", message)

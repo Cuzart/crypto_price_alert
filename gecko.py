@@ -1,5 +1,6 @@
 from decouple import config as getenv
 from pycoingecko import CoinGeckoAPI
+import logging
 import json
 
 
@@ -26,13 +27,17 @@ class Gecko:
     def get_trending(self):
         trending = []
         for entry in self.cg.get_search_trending()["coins"]:
-            trending.append("{} ({})".format(entry['item']['name'], entry['item']['symbol']))
+            trending.append("{0[['name']]} ({0['symbol']})".format(entry['item']))
         return "\n".join(trending).rstrip("\n")
 
     # check if price of assets in list are up/down by the limit in their 24h change
     def check_price_action(self):
         for index, asset in enumerate(json.loads(self.asset_list)):
-            asset_data = self.get_asset_data(asset)
+            try:
+                asset_data = self.get_asset_data(asset)
+            except:
+              logging.info("Could not found data for asset " + asset.upper())
+
             asset_price = asset_data[1]
             asset_24h_change = asset_data[2]
 
@@ -44,13 +49,11 @@ class Gecko:
                 if index in self.notifications:
                     del self.notifications[index]
 
-        print(self.notifications)
-
     # get asset with price and 24h change from api
     def get_asset_data(self, asset_shortform):
         asset_id = self.get_coingecko_id(asset_shortform)
         data = self.cg.get_price(ids=asset_id, vs_currencies='eur', include_24hr_change="true")
-
+        
         asset_price = round(data[asset_id]['eur'], 4)
         asset_24h_change = round(data[asset_id]['eur_24h_change'], 2)
 
@@ -62,16 +65,14 @@ class Gecko:
             if coin['symbol'] == asset_shortform.lower():
                 return coin['id']
 
-        print("Sorry did not found a match for your asset {}.".format(asset_shortform))
-
     def get_global(self):
         data = self.cg.get_global()
         global_mcap_change = round(data['market_cap_change_percentage_24h_usd'],2)
         btc_dominance = round(data['market_cap_percentage']['btc'],2)
         eth_dominance = round(data['market_cap_percentage']['eth'],2)
 
-        return (f"Global stats 🌐" + "\n"
-                f"Market 24h change: {global_mcap_change}%" + "\n"
-                f"BTC dominance: {btc_dominance}%" + "\n"
+        return (f"Global stats 🌐\n"
+                f"Market 24h change: {global_mcap_change}%\n"
+                f"BTC dominance: {btc_dominance}%\n"
                 f"ETH dominance: {eth_dominance}%" 
                 )

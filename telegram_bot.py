@@ -48,6 +48,9 @@ class TelegramBot:
             
             if len(message) > 1: return message
 
+        if user_message in ("global"):
+            return gecko.get_global()
+
         # try to find a matching asset and return the price and 24h change
         if len(user_message) <= 5:
             for coin in gecko.all_coins:
@@ -60,16 +63,16 @@ class TelegramBot:
         update.message.reply_text("Welcome!👋 \nTry '/help' to list all possbile commands or just wait to receive your alerts.")
 
     def help_command(self, update: Update, context: CallbackContext):
-        response = """
-          Possible commands 🔧
-          /help - to list all commands
-          assets - to list all watched assets
-          trending - for top seven trending coins on CoinGecko
-          limits - show limits for receiving an alert
-          interval - to show in which interval prices are checked
-          state - to show current state of watched prices
-          short form of an asset e.g. BTC - for price information 
-        """
+        response = ("Possible commands 🔧\n"
+                    "/help - to list all commands\n" 
+                    "'assets' - to list all watched assets\n"
+                    "'trending' - for top seven trending coins on CoinGecko\n"
+                    "'limits' - show limits for receiving an alert\n"
+                    "'interval' - to show in which interval prices are checked\n"
+                    "'state' - to show current state of watched prices\n"
+                    "'global' - to list current stats of global crypto market\n"
+                    "short form of an asset e.g. 'BTC' - for price information\n"
+                    )
         update.message.reply_text(response)
 
     # handle incoming messages

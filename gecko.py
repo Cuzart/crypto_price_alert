@@ -63,3 +63,15 @@ class Gecko:
                 return coin['id']
 
         print("Sorry did not found a match for your asset {}.".format(asset_shortform))
+
+    def get_global(self):
+        data = self.cg.get_global()
+        global_mcap_change = round(data['market_cap_change_percentage_24h_usd'],2)
+        btc_dominance = round(data['market_cap_percentage']['btc'],2)
+        eth_dominance = round(data['market_cap_percentage']['eth'],2)
+
+        return (f"Global stats 🌐" + "\n"
+                f"Market 24h change: {global_mcap_change}%" + "\n"
+                f"BTC dominance: {btc_dominance}%" + "\n"
+                f"ETH dominance: {eth_dominance}%" 
+                )

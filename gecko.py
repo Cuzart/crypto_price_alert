@@ -27,7 +27,7 @@ class Gecko:
     def get_trending(self):
         trending = []
         for entry in self.cg.get_search_trending()["coins"]:
-            trending.append("{0[['name']]} ({0['symbol']})".format(entry['item']))
+            trending.append("{0['name']} ({0['symbol']})".format(entry['item']))
         return "\n".join(trending).rstrip("\n")
 
     # check if price of assets in list are up/down by the limit in their 24h change

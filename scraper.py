@@ -17,7 +17,6 @@ def get_earn_offers():
     return offers
 
     
-
 def get_fng_index():
     url = "https://alternative.me/crypto/fear-and-greed-index/"
     page = requests.get(url, headers=headers)
@@ -27,3 +26,15 @@ def get_fng_index():
 
     return index_now.find("div", "fng-circle").text
 
+    
+def get_rainbow_chart_state():
+    url = "https://www.blockchaincenter.net/en/bitcoin-rainbow-chart/"
+    page = requests.get(url, headers=headers)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    state = soup.find("div", class_="legend").find("span", class_="active").text
+
+    print(state)
+    return state
+
+get_rainbow_chart_state()

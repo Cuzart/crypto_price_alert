@@ -69,7 +69,7 @@ class Gecko:
     def get_global(self):
         data = self.cg.get_global()
         global_mcap_change = round(data['market_cap_change_percentage_24h_usd'],2)
-        btc_info = "{0[0]} is at {0[1]}€ with a {0[2]}% change in 24h".format(self.get_asset_data("btc"))
+        btc_info = "{0[0]} at {0[1]}€ with {0[2]}%".format(self.get_asset_data("btc"))
         btc_dominance = round(data['market_cap_percentage']['btc'],2)
         eth_dominance = round(data['market_cap_percentage']['eth'],2)
 

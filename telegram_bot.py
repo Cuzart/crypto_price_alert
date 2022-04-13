@@ -3,7 +3,7 @@ import json
 import logging
 from decouple import config as getenv
 from gecko import Gecko
-from scraper import get_fng_index, get_earn_offers
+from scraper import get_fng_index, get_earn_offers, get_rainbow_chart_state
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
 
@@ -43,6 +43,7 @@ class TelegramBot:
             interval = int(getenv("TIME_INTERVAL")) // 60
             return f"Prices are checked every {interval} minutes ⏰"
 
+        # current state of notifications
         if user_message in ("notifications", "state"):
             gecko.check_price_action()
             message = ""
@@ -50,10 +51,14 @@ class TelegramBot:
                 message += "{0[0]}, {0[1]}€, {0[2]}% in 24h \n".format(line)
             return message if len(message) > 1 else "No active " 
 
+        # send global market info
         if user_message in ("global"):
-            message = gecko.get_global() + "\nFear & Greed Index: " + get_fng_index()
+            message = gecko.get_global()
+            message += "\nFear & Greed Index: " + get_fng_index()
+            message += "\nRainbow Chart: " + get_rainbow_chart_state()
             return message
 
+        # list cb earn offers
         if user_message in ("earn"):
             message = "Coinbase Earn offers\n" + ", ".join(get_earn_offers())
             return message
@@ -78,6 +83,7 @@ class TelegramBot:
                     "'interval' - to show in which interval prices are checked\n"
                     "'state' - to show current state of watched prices\n"
                     "'global' - to list current stats of global crypto market\n"
+                    "'earn' - to list coinbase earn offers\n"
                     "short form of an asset e.g. 'BTC' - for price information\n"
                     )
         update.message.reply_text(response)

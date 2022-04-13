@@ -3,6 +3,7 @@ import json
 import logging
 from decouple import config as getenv
 from gecko import Gecko
+from scraper import get_fng_index, get_earn_offers
 from telegram import Update
 from telegram.ext import Updater, CommandHandler, CallbackContext, MessageHandler, Filters
 
@@ -50,7 +51,12 @@ class TelegramBot:
             return message if len(message) > 1 else "No active " 
 
         if user_message in ("global"):
-            return gecko.get_global()
+            message = gecko.get_global() + "\nFear & Greed Index: " + get_fng_index()
+            return message
+
+        if user_message in ("earn"):
+            message = "Coinbase Earn offers\n" + ", ".join(get_earn_offers())
+            return message
 
         # try to find a matching asset and return the price and 24h change
         if len(user_message) <= 5:

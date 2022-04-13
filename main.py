@@ -23,7 +23,7 @@ def start_alert():
             # reset after 24h = after iterations_until_refresh
             counter += 1
             if counter % iterations_until_refresh == 0:
-              logging.info(f'Iteration refreshed after: {counter}')
+              logging.info(f'Notifications refreshed after: {counter} iterations')
               gecko.notifications = {}
 
             logging.info(f"Iteration: {counter} with {gecko.notifications}")

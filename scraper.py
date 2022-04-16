@@ -1,5 +1,5 @@
-import requests
 from bs4 import BeautifulSoup
+import requests
 
 headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.1 Safari/605.1.15'}
 
@@ -34,7 +34,4 @@ def get_rainbow_chart_state():
 
     state = soup.find("div", class_="legend").find("span", class_="active").text
 
-    print(state)
     return state
-
-get_rainbow_chart_state()

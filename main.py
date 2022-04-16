@@ -57,7 +57,7 @@ def start_alert():
 
                 # uncomment for sending email notifications
                 # send_email("New abnormal price actions! 📈 🥳", message)
-                # send_message(message)
+                send_message(message)
 
         except requests.exceptions.Timeout:
               logging.error("Timeout occured")
@@ -68,7 +68,7 @@ def start_alert():
 
 alert_thread = Thread(target=start_alert)
 alert_thread.start()
-# TelegramBot()
+TelegramBot()
 
 
 

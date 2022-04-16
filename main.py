@@ -4,12 +4,15 @@ import time
 from telegram_bot import TelegramBot, send_message
 from decouple import config as getenv
 from gecko import Gecko
+from scraper import get_earn_offers
 import requests
 
 
 def start_alert():
     logging.basicConfig(level=logging.INFO)
     gecko = Gecko()
+
+    initial_earn_offers = get_earn_offers()
 
     counter = 0
     seconds_in_day = 24 * 60 * 60
@@ -23,8 +26,18 @@ def start_alert():
             # reset after 24h = after iterations_until_refresh
             counter += 1
             if counter % iterations_until_refresh == 0:
-              logging.info(f'Notifications refreshed after: {counter} iterations')
-              gecko.notifications = {}
+                logging.info(f'Notifications refreshed after: {counter} iterations')
+                gecko.notifications = {}
+
+            # check if the cb earn offers changed
+            if counter % 6 == 0:
+                difference = set(get_earn_offers()) - set(initial_earn_offers)
+                if difference:
+                    initial_earn_offers = get_earn_offers()
+                    logging.info("New coinbase earn offer available")
+                    send_message("New coinbase earn offer available!\n" + ", ".join(difference) )
+
+                
 
             logging.info(f"Iteration: {counter} with {gecko.notifications}")
 
@@ -44,7 +57,7 @@ def start_alert():
 
                 # uncomment for sending email notifications
                 # send_email("New abnormal price actions! 📈 🥳", message)
-                send_message(message)
+                # send_message(message)
 
         except requests.exceptions.Timeout:
               logging.error("Timeout occured")
@@ -55,7 +68,7 @@ def start_alert():
 
 alert_thread = Thread(target=start_alert)
 alert_thread.start()
-TelegramBot()
+# TelegramBot()
 
 
 

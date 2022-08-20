@@ -5,11 +5,12 @@ headers = {"User-Agent": 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleW
 
 def get_earn_offers():
     offers = []
-    url = "https://www.coinbase.com/de/earn"
+    url = "https://www.coinbase.com/de/learning-rewards"
     page = requests.get(url, headers=headers)
     soup = BeautifulSoup(page.content, 'html.parser')
 
     card_container = soup.find("div", class_="EarnCards__CampaignCards-sc-1xftmgx-0")
+
 
     for e in card_container:
       offers.append(e.find("h3").text)
@@ -35,3 +36,6 @@ def get_rainbow_chart_state():
     state = soup.find("div", class_="legend").find("span", class_="active").text
 
     return state
+
+
+print(get_earn_offers())
